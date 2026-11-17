@@ -1,0 +1,3 @@
+# Lista bianca (PROVA)
+
+Vuota.

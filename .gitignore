@@ -1,0 +1,26 @@
+# Chiavi, ambienti, dati e media: mai nel repository
+.env
+.env.*
+*.key
+*.pem
+*.sqlite
+*.db
+*.mp4
+*.mov
+*.wav
+*.mp3
+generations/
+_scratch/
+_backup*/
+__pycache__/
+*.pyc
+node_modules/
+
+# log locali degli hook
+*.log
+*.env
+segreti/
+lavori/
+My Life Private/
+Sistema/03-finanze/
+Sistema/04-vita/

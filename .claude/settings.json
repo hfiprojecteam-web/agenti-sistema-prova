@@ -1,0 +1,69 @@
+{
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "COST_LEDGER_BACKEND": "notion",
+    "COST_LEDGER_ORIGIN": "Cloud",
+    "COST_LEDGER_NOTION_DATA_SOURCE_ID": "00000000-0000-0000-0000-000000000000",
+    "COST_LEDGER_DEADLINE_S": "20",
+    "SPEND_GUARD_APPROVAL_BACKEND": "notion"
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/date-inject.js\""
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/correction-reminder.py\""
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3 -I \"$CLAUDE_PROJECT_DIR/.claude/hooks/spend-guard.py\"",
+            "onFailure": "block"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit|Read|Bash|PowerShell|Agent|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3 -I \"$CLAUDE_PROJECT_DIR/.claude/hooks/protected-zone-guard.py\"",
+            "onFailure": "block"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__.*|Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3 -I \"$CLAUDE_PROJECT_DIR/.claude/hooks/agent-permissions-guard.py\"",
+            "onFailure": "block"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-digest.py\""
+          }
+        ]
+      }
+    ]
+  }
+}
